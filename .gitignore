@@ -1,0 +1,5 @@
+emsdk/
+*.exe
+*.obj
+*.ilk
+*.pdb
