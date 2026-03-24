@@ -449,7 +449,7 @@ void payrollReport()
     }
 
     printf("\n===== PAYROLL REPORT =====\n");
-    printf("ID\tName\tGross\tTax\tNet\n");
+    printf("ID\tName\tBasic\tOT\tGross\tTax\tNet\n");
 
     while(fread(&e,sizeof(e),1,fp))
     {
@@ -457,8 +457,8 @@ void payrollReport()
         float tax = calculateTax(gross);
         float net = gross-tax;
 
-        printf("%d\t%s\t%.2f\t%.2f\t%.2f\n",
-        e.empID,e.name,gross,tax,net);
+        printf("%d\t%s\t%.2f\t%d\t%.2f\t%.2f\t%.2f\n",
+        e.empID,e.name,e.basicPay,e.otHours,gross,tax,net);
     }
 
     fclose(fp);

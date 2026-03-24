@@ -397,16 +397,31 @@ function printPayslip() { window.print(); }
 
 // ─── Report ───────────────────────────
 function doPayrollReport() {
-  if (!wasmReady) { showResult('report-result', '⚠ C Engine not ready.', 'error'); return; }
-  const raw = runC(['7']);
+  if (!wasmReady) {
+    showResult('report-result', '⚠ C Engine not ready.', 'error');
+    return;
+  }
+
+  const raw = runC(['7']) || '';
 
   const rows = raw.split('\n').reduce((acc, line) => {
-    const m = line.trim().match(/^(\d+)\s+(\S.*?\S|\S+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*$/);
-    if (m) acc.push({ id: +m[1], name: m[2].trim(), gross: +m[3], tax: +m[4], net: +m[5] });
+    const m = line.trim().match(/^(\d+)\s+(.+?)\s+([\d.]+)\s+(\d+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)$/);
+    if (m) {
+      acc.push({
+        id: +m[1],
+        name: m[2].trim(),
+        basic: +m[3],
+        ot: +m[4],
+        gross: +m[5],
+        tax: +m[6],
+        net: +m[7]
+      });
+    }
     return acc;
   }, []);
 
   const tbody = document.getElementById('report-tbody');
+
   if (!rows.length) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No records found.</td></tr>';
     document.getElementById('report-totals').style.display = 'none';
@@ -415,12 +430,17 @@ function doPayrollReport() {
   }
 
   let tGross = 0, tTax = 0, tNet = 0;
+
   tbody.innerHTML = rows.map(r => {
-    tGross += r.gross; tTax += r.tax; tNet += r.net;
+    tGross += r.gross;
+    tTax += r.tax;
+    tNet += r.net;
+
     return `<tr>
       <td class="td-id">${r.id}</td>
       <td>${r.name}</td>
-      <td>—</td><td>—</td>
+      <td>${fmt(r.basic)}</td>
+      <td>${r.ot} hrs</td>
       <td>${fmt(r.gross)}</td>
       <td>${fmt(r.tax)}</td>
       <td class="td-net">${fmt(r.net)}</td>
@@ -431,6 +451,7 @@ function doPayrollReport() {
   document.getElementById('rt-tax').textContent   = fmt(tTax);
   document.getElementById('rt-net').textContent   = fmt(tNet);
   document.getElementById('report-totals').style.display = 'flex';
+
   showResult('report-result', `✓ Report for ${rows.length} employee(s).`, 'success');
 }
 
