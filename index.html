@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayrollOS — Employee Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SIDEBAR NAV -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">⬡</div>
+    <span>PayrollOS</span>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-item active" data-page="home" onclick="navigate('home')">
+      <span class="nav-icon">◈</span><span>Dashboard</span>
+    </li>
+    <li class="nav-item" data-page="add" onclick="navigate('add')">
+      <span class="nav-icon">✦</span><span>Add Employee</span>
+    </li>
+    <li class="nav-item" data-page="view" onclick="navigate('view')">
+      <span class="nav-icon">◉</span><span>View All</span>
+    </li>
+    <li class="nav-item" data-page="search" onclick="navigate('search')">
+      <span class="nav-icon">◎</span><span>Search</span>
+    </li>
+    <li class="nav-item" data-page="update" onclick="navigate('update')">
+      <span class="nav-icon">⟳</span><span>Update Salary</span>
+    </li>
+    <li class="nav-item" data-page="delete" onclick="navigate('delete')">
+      <span class="nav-icon">✕</span><span>Delete</span>
+    </li>
+    <li class="nav-item" data-page="payslip" onclick="navigate('payslip')">
+      <span class="nav-icon">◆</span><span>Payslip</span>
+    </li>
+    <li class="nav-item" data-page="report" onclick="navigate('report')">
+      <span class="nav-icon">▣</span><span>Report</span>
+    </li>
+  </ul>
+  <div class="sidebar-footer">
+    <div class="c-badge">C + WASM Core</div>
+  </div>
+</nav>
+
+<!-- MOBILE HAMBURGER -->
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="main">
+
+  <!-- PAGE: DASHBOARD -->
+  <div class="page active" id="page-home">
+    <div class="page-header">
+      <h1 class="page-title">Employee Payroll</h1> <div class="page-label">    </div>
+      <div class="page-label">MANAGEMENT SYSTEM</div>
+      <p class="page-sub"> Dashboard    powered by C</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="dash-count">0</div>
+        <div class="stat-label">Employees</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-num" id="dash-payroll">₹0</div>
+        <div class="stat-label">Total Gross Pay</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="dash-tax">₹0</div>
+        <div class="stat-label">Total Tax</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="dash-net">₹0</div>
+        <div class="stat-label">Net Pay</div>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-actions">
+        <h3>Quick Actions</h3>
+        <div class="action-grid">
+          <div class="action-btn" onclick="navigate('add')"><span>✦</span> Add Employee</div>
+          <div class="action-btn" onclick="navigate('view')"><span>◉</span> View All</div>
+          <div class="action-btn" onclick="navigate('payslip')"><span>◆</span> Generate Payslip</div>
+          <div class="action-btn" onclick="navigate('report')"><span>▣</span> Payroll Report</div>
+        </div>
+      </div>
+      <div class="terminal-card">
+        <div class="terminal-header">
+          <div class="t-dots"><span></span><span></span><span></span></div>
+          <span class="t-title">C Engine Output</span>
+        </div>
+        <textarea id="output" class="terminal-output" readonly placeholder="C program output will appear here..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: ADD EMPLOYEE -->
+  <div class="page" id="page-add">
+    <div class="page-header">
+      <div class="page-label">OPERATION</div>
+      <h1 class="page-title">Add Employee</h1>
+      <p class="page-sub">Register a new employee into the system</p>
+    </div>
+    <div class="form-container">
+      <div class="form-card">
+        <div class="form-section">
+          <label class="form-label">Employee ID <span class="req">*</span></label>
+          <input class="form-input" id="add-id" type="number" placeholder="e.g. 1001" min="1">
+        </div>
+        <div class="form-section">
+          <label class="form-label">Full Name <span class="req">*</span></label>
+          <input class="form-input" id="add-name" type="text" placeholder="e.g. Arjun Kumar">
+        </div>
+        <div class="form-section">
+          <label class="form-label">Basic Pay (₹) <span class="req">*</span></label>
+          <input class="form-input" id="add-pay" type="number" placeholder="e.g. 45000" min="0" step="0.01">
+        </div>
+        <div class="form-section">
+          <label class="form-label">Overtime Hours <span class="req">*</span></label>
+          <input class="form-input" id="add-ot" type="number" placeholder="e.g. 10" min="0">
+        </div>
+        <div class="form-note">
+          <span class="note-icon">ℹ</span> OT is calculated at ₹200/hr. Tax: 5% (≤30k), 10% (≤60k), 15% (>60k gross)
+        </div>
+        <button class="submit-btn" onclick="doAddEmployee()">
+          <span>✦</span> Add Employee
+        </button>
+        <div class="result-box" id="add-result"></div>
+      </div>
+      <div class="form-preview" id="add-preview">
+        <div class="preview-label">LIVE PREVIEW</div>
+        <div class="preview-row"><span>Employee ID</span><strong id="pv-id">—</strong></div>
+        <div class="preview-row"><span>Name</span><strong id="pv-name">—</strong></div>
+        <div class="preview-row"><span>Basic Pay</span><strong id="pv-pay">—</strong></div>
+        <div class="preview-row"><span>OT Hours</span><strong id="pv-ot">—</strong></div>
+        <div class="preview-divider"></div>
+        <div class="preview-row"><span>Estimated Gross</span><strong id="pv-gross">—</strong></div>
+        <div class="preview-row"><span>Estimated Tax</span><strong id="pv-tax">—</strong></div>
+        <div class="preview-row highlight"><span>Estimated Net</span><strong id="pv-net">—</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: VIEW ALL -->
+  <div class="page" id="page-view">
+    <div class="page-header">
+      <div class="page-label">RECORDS</div>
+      <h1 class="page-title">All Employees</h1>
+      <p class="page-sub">Complete employee roster from the C data store</p>
+    </div>
+    <div class="table-card">
+      <div class="table-toolbar">
+        <button class="submit-btn small" onclick="doViewEmployees()"><span>◉</span> Refresh Records</button>
+      </div>
+      <div class="table-wrap">
+        <table id="emp-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Basic Pay</th><th>OT Hrs</th><th>Gross</th><th>Tax</th><th>Net Pay</th>
+            </tr>
+          </thead>
+          <tbody id="emp-tbody">
+            <tr class="empty-row"><td colspan="7">Click "Refresh Records" to load data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="result-box" id="view-result"></div>
+  </div>
+
+  <!-- PAGE: SEARCH -->
+  <div class="page" id="page-search">
+    <div class="page-header">
+      <div class="page-label">LOOKUP</div>
+      <h1 class="page-title">Search Employee</h1>
+      <p class="page-sub">Find an employee record by ID</p>
+    </div>
+    <div class="form-container single">
+      <div class="form-card wide">
+        <div class="form-section">
+          <label class="form-label">Employee ID</label>
+          <div class="input-row">
+            <input class="form-input" id="search-id" type="number" placeholder="Enter Employee ID">
+            <button class="submit-btn inline" onclick="doSearchEmployee()"><span>◎</span> Search</button>
+          </div>
+        </div>
+        <div class="result-box" id="search-result"></div>
+        <div class="employee-card" id="search-card" style="display:none">
+          <div class="ec-header">
+            <div class="ec-avatar" id="ec-avatar">A</div>
+            <div>
+              <div class="ec-name" id="ec-name">—</div>
+              <div class="ec-id" id="ec-id">ID: —</div>
+            </div>
+          </div>
+          <div class="ec-grid">
+            <div class="ec-item"><span>Basic Pay</span><strong id="ec-pay">—</strong></div>
+            <div class="ec-item"><span>OT Hours</span><strong id="ec-ot">—</strong></div>
+            <div class="ec-item"><span>Gross Pay</span><strong id="ec-gross">—</strong></div>
+            <div class="ec-item"><span>Tax</span><strong id="ec-tax">—</strong></div>
+            <div class="ec-item highlight"><span>Net Pay</span><strong id="ec-net">—</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: UPDATE -->
+  <div class="page" id="page-update">
+    <div class="page-header">
+      <div class="page-label">MODIFY</div>
+      <h1 class="page-title">Update Salary</h1>
+      <p class="page-sub">Modify basic pay and overtime hours for an employee</p>
+    </div>
+    <div class="form-container single">
+      <div class="form-card wide">
+        <div class="form-section">
+          <label class="form-label">Employee ID <span class="req">*</span></label>
+          <input class="form-input" id="upd-id" type="number" placeholder="Employee ID to update">
+        </div>
+        <div class="form-section">
+          <label class="form-label">New Basic Pay (₹) <span class="req">*</span></label>
+          <input class="form-input" id="upd-pay" type="number" placeholder="New basic salary" min="0" step="0.01">
+        </div>
+        <div class="form-section">
+          <label class="form-label">New OT Hours <span class="req">*</span></label>
+          <input class="form-input" id="upd-ot" type="number" placeholder="New overtime hours" min="0">
+        </div>
+        <button class="submit-btn warning" onclick="doUpdateEmployee()">
+          <span>⟳</span> Update Employee
+        </button>
+        <div class="result-box" id="upd-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: DELETE -->
+  <div class="page" id="page-delete">
+    <div class="page-header">
+      <div class="page-label">REMOVE</div>
+      <h1 class="page-title">Delete Employee</h1>
+      <p class="page-sub">Permanently remove an employee from the system</p>
+    </div>
+    <div class="form-container single">
+      <div class="form-card wide">
+        <div class="danger-notice">
+          <span class="danger-icon">⚠</span>
+          <div>
+            <strong>This action is irreversible.</strong>
+            <p>Deleting an employee will permanently remove all their records from the data file.</p>
+          </div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Employee ID</label>
+          <input class="form-input" id="del-id" type="number" placeholder="Enter ID to delete">
+        </div>
+        <button class="submit-btn danger" onclick="doDeleteEmployee()">
+          <span>✕</span> Confirm Delete
+        </button>
+        <div class="result-box" id="del-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: PAYSLIP -->
+  <div class="page" id="page-payslip">
+    <div class="page-header">
+      <div class="page-label">DOCUMENT</div>
+      <h1 class="page-title">Generate Payslip</h1>
+      <p class="page-sub">Generate a detailed payslip for any employee</p>
+    </div>
+    <div class="form-container single">
+      <div class="form-card wide">
+        <div class="form-section">
+          <label class="form-label">Employee ID</label>
+          <div class="input-row">
+            <input class="form-input" id="slip-id" type="number" placeholder="Enter Employee ID">
+            <button class="submit-btn inline" onclick="doPayslip()"><span>◆</span> Generate</button>
+          </div>
+        </div>
+        <div class="result-box" id="slip-result"></div>
+        <div class="payslip-doc" id="payslip-doc" style="display:none">
+          <div class="ps-header">
+            <div class="ps-brand">PayrollOS</div>
+            <div class="ps-title">SALARY SLIP</div>
+            <div class="ps-period" id="ps-period"></div>
+          </div>
+          <div class="ps-employee">
+            <div class="ps-row"><span>Employee ID</span><strong id="ps-id">—</strong></div>
+            <div class="ps-row"><span>Name</span><strong id="ps-name">—</strong></div>
+          </div>
+          <div class="ps-earnings">
+            <div class="ps-section-title">EARNINGS</div>
+            <div class="ps-row"><span>Basic Pay</span><strong id="ps-basic">—</strong></div>
+            <div class="ps-row"><span>Overtime (<span id="ps-ot-h">0</span> hrs × ₹200)</span><strong id="ps-ot">—</strong></div>
+            <div class="ps-row total"><span>Gross Pay</span><strong id="ps-gross">—</strong></div>
+          </div>
+          <div class="ps-deductions">
+            <div class="ps-section-title">DEDUCTIONS</div>
+            <div class="ps-row"><span>Income Tax</span><strong id="ps-tax">—</strong></div>
+          </div>
+          <div class="ps-net">
+            <span>NET PAY</span>
+            <strong id="ps-net">—</strong>
+          </div>
+          <div style="padding:16px 24px">
+            <button class="submit-btn small" onclick="printPayslip()">⎙ Print Payslip</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: REPORT -->
+  <div class="page" id="page-report">
+    <div class="page-header">
+      <div class="page-label">ANALYTICS</div>
+      <h1 class="page-title">Payroll Report</h1>
+      <p class="page-sub">Full payroll breakdown for all employees</p>
+    </div>
+    <div class="table-card">
+      <div class="table-toolbar">
+        <button class="submit-btn small" onclick="doPayrollReport()"><span>▣</span> Generate Report</button>
+        <div class="report-totals" id="report-totals" style="display:none">
+          <div class="rt-item"><span>Total Gross</span><strong id="rt-gross">₹0</strong></div>
+          <div class="rt-item"><span>Total Tax</span><strong id="rt-tax">₹0</strong></div>
+          <div class="rt-item accent"><span>Total Net</span><strong id="rt-net">₹0</strong></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="report-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Basic</th><th>OT Hrs</th><th>Gross</th><th>Tax</th><th>Net Pay</th>
+            </tr>
+          </thead>
+          <tbody id="report-tbody">
+            <tr class="empty-row"><td colspan="7">Click "Generate Report" to load payroll data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="result-box" id="report-result"></div>
+  </div>
+
+</main>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script async src="employee.js"></script>
+
+</body>
+</html>
